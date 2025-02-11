@@ -23,17 +23,20 @@ public class DataManager
     /// </returns>
     public async Task<int> ConsolidateDataFromSourcesAsync(int dataId)
     {
+        // Check for invalid data ID
         if (dataId < 0)
         {
             return (int)DataManagerResult.InvalidDataID;
         }
 
+        // Fetch data and check for emptiness
         var data = await Task.Run(() => _dataFetcher.FetchData(dataId));
         if (string.IsNullOrWhiteSpace(data))
         {
             return (int)DataManagerResult.EmptyDataID;
         }
 
+        // Store the data if not empty
         await Task.Run(() => _dataStorage.StoreData(dataId, data));
         return (int)DataManagerResult.Success;
     }
