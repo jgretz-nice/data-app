@@ -2,37 +2,43 @@ namespace DataApp.Tests;
 
 public class DataManager_Consolidation
 {
-    [Fact(DisplayName = "Invalid Data ID Request")]
-    public async void ConsolidateDataFromSources_InvalidDataIdRequest_Fails()
-    {
-        // Prepares Data Manager object for testing
-        DataManager dataManager = new();
+    private readonly DataManager _dataManager;
 
+    public DataManager_Consolidation()
+    {
+        // Initialize a new DataManager for each test
+        // See https://xunit.net/docs/shared-context for more information
+        _dataManager = new();
+    }
+
+    [Fact(DisplayName = "Invalid Data ID Request")]
+    public async void ConsolidateDataFromSources_InvalidDataId()
+    {
         // Expect result to be InvalidDataID (-1) since we're inputting an invalid data ID
-        var result = await dataManager.ConsolidateDataFromSourcesAsync(-1);
-        Assert.Equal((int)DataManagerResult.InvalidDataID, result);
+        Assert.Equal(
+            (int)DataManagerResult.InvalidDataID,
+            await _dataManager.ConsolidateDataFromSourcesAsync(-1)
+        );
     }
 
     [Fact(DisplayName = "Empty Data Request")]
-    public async void ConsolidateDataFromSources_EmptyDataId_Fails()
+    public async void ConsolidateDataFromSources_EmptyDataId()
     {
-        // Prepares Data Manager object for testing
-        DataManager dataManager = new();
-
         // Expect result to be EmptyDataID (-2) since we're inputting a valid data ID that 
         // corresponds to an empty data source
-        var result = await dataManager.ConsolidateDataFromSourcesAsync(1);
-        Assert.Equal((int)DataManagerResult.EmptyDataID, result);
+        Assert.Equal(
+            (int)DataManagerResult.EmptyDataID,
+            await _dataManager.ConsolidateDataFromSourcesAsync(1)
+        );
     }
 
     [Fact(DisplayName = "Valid Data Request")]
     public async void ConsolidateDataFromSources_Success()
     {
-        // Prepares Data Manager object for testing
-        DataManager dataManager = new();
-
         // Expect result to be Success (0) since we're inputting a valid, non-empty data ID
-        var result = await dataManager.ConsolidateDataFromSourcesAsync(2);
-        Assert.Equal((int)DataManagerResult.Success, result);
+        Assert.Equal(
+            (int)DataManagerResult.Success,
+            await _dataManager.ConsolidateDataFromSourcesAsync(2)
+        );
     }
 }
