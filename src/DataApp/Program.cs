@@ -2,16 +2,29 @@
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var manager = new DataManager();
-        for (int i = 0; i <= 10; i++)
+        var tasks = new List<Task>();
+
+        void consolidateDataForId(int id)
         {
-            Console.WriteLine($"Consolidated dataId {i}. Result=" + manager.ConsolidateDataFromSources(i));
+            tasks.Add(Task.Run(async () =>
+            {
+                var result = await manager.ConsolidateDataFromSourcesAsync(id);
+                Console.WriteLine($"Consolidated dataId {id}. Result=" + manager.ConsolidateDataFromSourcesAsync(id));
+            }));
         }
-        
-        Console.WriteLine("Consolidated dataId 27. Result=" + manager.ConsolidateDataFromSources(27));
-        
+
+        // Add tasks to pool
+        consolidateDataForId(27);
+        for (int id = 0; id <= 10; id++)
+        {
+            consolidateDataForId(id);
+        }
+
+        // Wait for all tasks to complete
+        await Task.WhenAll(tasks);
         Console.WriteLine("Completed");
     }
 }

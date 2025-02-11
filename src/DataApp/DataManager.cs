@@ -21,20 +21,20 @@ public class DataManager
     /// <item><description>  0 if we successfully consolidated </description></item>
     /// </list>
     /// </returns>
-    public int ConsolidateDataFromSources(int dataId)
+    public async Task<int> ConsolidateDataFromSourcesAsync(int dataId)
     {
         if (dataId < 0)
         {
             return (int)DataManagerResult.InvalidDataID;
         }
 
-        var data = _dataFetcher.FetchData(dataId);
+        var data = await Task.Run(() => _dataFetcher.FetchData(dataId));
         if (string.IsNullOrWhiteSpace(data))
         {
             return (int)DataManagerResult.EmptyDataID;
         }
 
-        _dataStorage.StoreData(dataId, data);
+        await Task.Run(() => _dataStorage.StoreData(dataId, data));
         return (int)DataManagerResult.Success;
     }
 }
